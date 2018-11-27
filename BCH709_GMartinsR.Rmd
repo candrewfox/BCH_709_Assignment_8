@@ -1,0 +1,87 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+plot(cars)
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+
+```{r}
+##package install and loading
+##package installs commented out
+##DO NOT CHANGE UNLESS NECESSARY
+#install.packages("tidyverse")
+#install.packages("gapminder")
+library("tidyverse")
+library("gapminder")
+data("gapminder")
+```
+
+##Load gapminder dataset into data frame
+```{r}
+gapminder_table <- gapminder
+gapminder_table
+```
+
+
+##Data summary of gapminder data frame
+```{r}
+summary(gapminder_table)
+```
+
+##Histogram of population (log transformed)
+```{r}
+hist(log(pop))
+```
+
+##Scatterplot of life expectancy and log transformed gdp per capita
+```{r}
+plot(lifeExp ~ log(gdpPercap))
+```
+
+##T-Test of life expectancy differences between South Africa and Ireland
+```{r}
+df1 <- gapminder %>%
+select(country,lifeExp) %>%
+ filter(country== "South Africa" |
+            country== "Ireland")
+  
+  t.test(data = df1, lifeExp ~ country)
+
+```
+
+##Single-plot of life expectancy and gdp per capita, colored by continent, dot sized by population, smoothed
+```{r}
+gapminder %>% 
+  filter(gdpPercap < 50000) %>% 
+  ggplot(aes(x=log(gdpPercap), y=lifeExp, col=continent, size=pop))+
+  geom_point(alpha=0.3)+
+  geom_smooth(method=lm)
+```
+##Faceted scatterplot, colored by year, faceted by continent, smoothed
+```{r}
+gapminder %>% 
+  filter(gdpPercap < 50000) %>% 
+  ggplot(aes(x=log(gdpPercap), y=lifeExp, col=year, size=pop))+
+  geom_point(alpha=0.3)+
+  geom_smooth(method = lm)+
+facet_wrap(~continent)
+```
+
+##linear model test of life expectancy by gdp per capita and population, summary included
+```{r}
+
+summary(lm(lifeExp ~gdpPercap+pop))
+```
+
